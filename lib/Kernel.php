@@ -5,7 +5,10 @@ namespace Lean;
 use Aura\Router\RouterContainer;
 use League\Container\Container;
 use League\Container\ReflectionContainer;
+use League\Event\AbstractListener;
+use League\Event\Emitter;
 use League\Plates\Engine;
+use Lean\Event\KernelRequestEvent;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -27,10 +30,18 @@ abstract class Kernel
     protected $templates;
 
     /**
+     * @var Emitter
+     */
+    protected $emitter;
+
+    /**
      * Kernel constructor.
      */
     public function __construct()
     {
+        // Instantiate event emitter
+        $this->emitter = new Emitter();
+
         // Instantiate and configure dependency injection container
         $this->di = new Container();
         $this->di->delegate(
@@ -57,6 +68,12 @@ abstract class Kernel
         /** @var Response $response */
         $response = null;
 
+        /** @var KernelRequestEvent $event */
+        $event = $this->emitter->emit(new KernelRequestEvent(), $request);
+        if ($event->isPropagationStopped() && $event->getResponse() != null) {
+            return $event->getResponse();
+        }
+
         // Route matching
         $matcher = $this->router->getMatcher();
         $route   = $matcher->match($request);
@@ -80,5 +97,9 @@ abstract class Kernel
         }
 
         return $response;
+    }
+
+    function registerListener(string $event, AbstractListener $listener) {
+        $this->emitter->addListener($event, $listener);
     }
 }

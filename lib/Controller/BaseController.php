@@ -38,7 +38,8 @@ class BaseController
         return $response;
     }
 
-    function redirect(string $location, $statusCode = 301): Response {
-        return (new Response())->withHeader('Location', $location)->withStatus($statusCode);
+    function redirect(string $location, $statusCode = 302): Response {
+        $response = (new Response())->withRedirect('/login', $statusCode);
+        return $response;
     }
 }
