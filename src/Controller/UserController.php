@@ -9,6 +9,7 @@
 namespace App\Controller;
 
 
+use Lean\Controller\BaseController;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -16,7 +17,7 @@ use Slim\Http\Response;
  * Class UserController
  * @package App\Controller
  */
-class UserController
+class UserController extends BaseController
 {
     /**
      * @param Request $request
@@ -24,8 +25,6 @@ class UserController
      * @return Response
      */
     function index(Request $request, array $data) : Response {
-        $response = new Response();
-        $response->write("Hello " . $data['name']);
-        return $response;
+        return $this->response('Hello ' . $data['name']);
     }
 }
