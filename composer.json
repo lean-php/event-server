@@ -9,5 +9,7 @@
             "email": "php@lean-stack.de"
         }
     ],
-    "require": {}
+    "require": {
+        "slim/http": "^0.3.0"
+    }
 }

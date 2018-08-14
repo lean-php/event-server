@@ -6,5 +6,12 @@
 // Autoloader
 require '../vendor/autoload.php';
 
-echo '<h2>Front Controller</h2>';
+// Create request from globals
+$request = \Slim\Http\Request::createFromGlobals($_SERVER);
 
+$response = new \Slim\Http\Response();
+$response->getBody()->write('<p>Front Controller with wrapped message objects');
+$response->getBody()->write('<p>Hello ' . $request->getQueryParam('name', 'World'));
+
+// Extremly simple response sending
+echo $response->getBody();
