@@ -3,6 +3,7 @@
 namespace Lean;
 
 use Aura\Router\RouterContainer;
+use League\Plates\Engine;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -14,13 +15,24 @@ abstract class Kernel
     protected $router;
 
     /**
+     * @var Engine
+     */
+    protected $templates;
+
+    /**
      * Kernel constructor.
      */
     public function __construct()
     {
+        // Instantiate and configure router
         $this->router = new RouterContainer();
         $map = $this->router->getMap();
         require '../config/routes.php';
+
+        // Instantiate and configure template engine
+        $this->templates = new Engine('../templates');
+        $this->templates->setFileExtension('tpl');
+        $this->templates->addData(['title' => 'FlüAG']);
     }
 
     function handle(Request $request): Response
@@ -38,7 +50,8 @@ abstract class Kernel
             $actionName = $route->attributes['action'];
 
             // Instantiate Controller
-            $controller = new $controllerClass;
+            $controller = new $controllerClass($this->templates);
+
             // Invoke action
             $response = call_user_func([$controller, $actionName], $request, $route->attributes);
         } else {

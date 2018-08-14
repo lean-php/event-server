@@ -25,6 +25,6 @@ class UserController extends BaseController
      * @return Response
      */
     function index(Request $request, array $data) : Response {
-        return $this->response('Hello ' . $data['name']);
+        return $this->render('user/welcome', $data);
     }
 }

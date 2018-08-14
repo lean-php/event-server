@@ -9,10 +9,28 @@
 namespace Lean\Controller;
 
 
+use League\Plates\Engine;
 use Slim\Http\Response;
 
 class BaseController
 {
+    /** @var Engine */
+    protected $templates;
+
+    /**
+     * BaseController constructor.
+     * @param Engine $templates
+     */
+    public function __construct(Engine $templates)
+    {
+        $this->templates = $templates;
+    }
+
+    function render(string $template, array $data): Response {
+        $body = $this->templates->render($template, $data);
+        return $this->response($body);
+    }
+
     function response(string $body = '', $statusCode = 200): Response {
         $response = (new Response())->withStatus($statusCode);
         $response->getBody()->write($body);
