@@ -9,9 +9,11 @@ require '../vendor/autoload.php';
 // Create request from globals
 $request = \Slim\Http\Request::createFromGlobals($_SERVER);
 
-$response = new \Slim\Http\Response();
-$response->getBody()->write('<p>Front Controller with wrapped message objects');
-$response->getBody()->write('<p>Hello ' . $request->getQueryParam('name', 'World'));
+// Create the app kernel
+$kernel = new \App\Kernel();
+
+// Handle request
+$response = $kernel->handle($request);
 
 // Extremly simple response sending
 echo $response->getBody();

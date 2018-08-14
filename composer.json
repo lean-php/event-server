@@ -9,6 +9,12 @@
             "email": "php@lean-stack.de"
         }
     ],
+    "autoload": {
+        "psr-4": {
+            "Lean\\": "lib/",
+            "App\\": "src/"
+        }
+    },
     "require": {
         "slim/http": "^0.3.0"
     }
