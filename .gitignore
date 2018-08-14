@@ -1,2 +1,5 @@
+# NPM deps
+/vendor/
+
 # IDE/Editor settings
 /.idea/

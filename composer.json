@@ -1,0 +1,13 @@
+{
+    "name": "lean/event-server",
+    "description": "Einfacher event-basierter PHP app server.",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Micha Alt",
+            "email": "php@lean-stack.de"
+        }
+    ],
+    "require": {}
+}
