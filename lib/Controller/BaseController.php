@@ -9,6 +9,7 @@
 namespace Lean\Controller;
 
 
+use App\Service\DB;
 use League\Plates\Engine;
 use Slim\Http\Response;
 
@@ -21,7 +22,7 @@ class BaseController
      * BaseController constructor.
      * @param Engine $templates
      */
-    public function __construct(Engine $templates)
+    public function __construct(Engine $templates, DB $db)
     {
         $this->templates = $templates;
     }
