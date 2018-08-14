@@ -9,6 +9,7 @@ use League\Event\AbstractListener;
 use League\Event\Emitter;
 use League\Plates\Engine;
 use Lean\Event\KernelRequestEvent;
+use Psr\Http\Message\ResponseInterface;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
@@ -102,4 +103,56 @@ abstract class Kernel
     function registerListener(string $event, AbstractListener $listener) {
         $this->emitter->addListener($event, $listener);
     }
+
+    /**
+     * Send the response to the client (simplified Slim version
+     *
+     * @param ResponseInterface $response
+     */
+    public function respond(ResponseInterface $response)
+    {
+        // Send response
+        if (!headers_sent()) {
+            // Headers
+            foreach ($response->getHeaders() as $name => $values) {
+                $first = stripos($name, 'Set-Cookie') === 0 ? false : true;
+                foreach ($values as $value) {
+                    header(sprintf('%s: %s', $name, $value), $first);
+                    $first = false;
+                }
+            }
+            // Set the status _after_ the headers, because of PHP's "helpful" behavior with location headers.
+            // See https://github.com/slimphp/Slim/issues/1730
+            // Status
+            header(sprintf(
+                'HTTP/%s %s %s',
+                $response->getProtocolVersion(),
+                $response->getStatusCode(),
+                $response->getReasonPhrase()
+            ), true, $response->getStatusCode());
+        }
+        // Body
+        if (!$this->isEmptyResponse($response)) {
+            $body = $response->getBody();
+            echo $body;
+        }
+    }
+
+    /**
+     * Helper method, which returns true if the provided response must not output a body and false
+     * if the response could have a body.
+     *
+     * @see https://tools.ietf.org/html/rfc7231
+     *
+     * @param ResponseInterface $response
+     * @return bool
+     */
+    protected function isEmptyResponse(ResponseInterface $response)
+    {
+        if (method_exists($response, 'isEmpty')) {
+            return $response->isEmpty();
+        }
+        return in_array($response->getStatusCode(), [204, 205, 304]);
+    }
+
 }

@@ -15,5 +15,5 @@ $kernel = new \App\Kernel();
 // Handle request
 $response = $kernel->handle($request);
 
-// Extremly simple response sending
-echo $response->getBody();
+// Send the response
+$kernel->respond($response);
